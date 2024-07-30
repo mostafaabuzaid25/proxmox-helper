@@ -1,5 +1,3 @@
-
-
 ```bash
 #!/bin/bash
 
@@ -16,31 +14,41 @@ sed -i '/checked_command: function(orig_cmd) {/a \    orig_cmd();\n    return;' 
 # Restart the Proxmox web service
 systemctl restart pveproxy.service
 
+# Backup existing sources.list
+cp /etc/apt/sources.list /etc/apt/sources.list.bak
+
+# Write new sources.list
+cat <<EOF > /etc/apt/sources.list
+deb http://ftp.us.debian.org/debian bookworm main contrib
+deb http://ftp.us.debian.org/debian bookworm-updates main contrib
+deb http://security.debian.org bookworm-security main contrib
+deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+EOF
+
+# Backup existing ceph.list
+cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+
+# Write new ceph.list
+cat <<EOF > /etc/apt/sources.list.d/ceph.list
+deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
+deb http://download.proxmox.com/debian/ceph-reef bookworm no-subscription
+EOF
+
+# Backup existing pve-enterprise.list
+cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
+
+# Write new pve-enterprise.list
+cat <<EOF > /etc/apt/sources.list.d/pve-enterprise.list
+deb http://security.debian.org/debian-security bookworm-security main contrib
+EOF
+
+# Update package lists
+apt-get update
+
+# Upgrade packages
+apt-get upgrade -y
+
 # Clear the browser cache note (add instructions for user to follow)
 echo "Please clear your browser cache. Depending on the browser, you may need to open a new tab or restart the browser."
 
-# Additional notes on how to revert the changes
-echo "To revert the changes, you have three options:"
-echo "1. Manually edit proxmoxlib.js to undo the changes you made."
-echo "2. Restore the backup file:"
-echo "   mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bak /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
-echo "3. Reinstall the proxmox-widget-toolkit package:"
-echo "   apt-get install --reinstall proxmox-widget-toolkit"
 ```
-
-### Save the Script
-1. Save the above script to a file, for example, `modify_proxmox.sh`.
-
-### Make the Script Executable
-2. Make the script executable by running:
-```bash
-chmod +x modify_proxmox.sh
-```
-
-### Execute the Script
-3. Run the script with superuser privileges:
-```bash
-sudo ./modify_proxmox.sh
-```
-
-This script automates the steps you outlined: changing directories, making a backup, editing the file, inserting the necessary lines, restarting the Proxmox web service, and providing instructions for clearing the browser cache and reverting the changes.
