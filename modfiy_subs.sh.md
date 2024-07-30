@@ -11,8 +11,6 @@ cp proxmoxlib.js proxmoxlib.js.bak
 # Use sed to locate and insert the required code
 sed -i '/checked_command: function(orig_cmd) {/a \    orig_cmd();\n    return;' proxmoxlib.js
 
-# Restart the Proxmox web service
-systemctl restart pveproxy.service
 
 # Backup existing sources.list
 cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -47,6 +45,8 @@ apt-get update
 
 # Upgrade packages
 apt-get upgrade -y
+# Restart the Proxmox web service
+systemctl restart pveproxy.service
 
 # Clear the browser cache note (add instructions for user to follow)
 echo "Please clear your browser cache. Depending on the browser, you may need to open a new tab or restart the browser."
