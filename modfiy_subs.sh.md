@@ -20,21 +20,14 @@ deb http://ftp.us.debian.org/debian bookworm-updates main contrib
 deb http://security.debian.org bookworm-security main contrib
 deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
 deb http://security.debian.org/debian-security bookworm-security main contrib
+deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
+deb http://download.proxmox.com/debian/ceph-reef bookworm no-subscription
 EOF
 
 # Backup existing ceph.list
 rm /etc/apt/sources.list.d/ceph.list
 
-# Write new ceph.list
-cat <<EOF > /etc/apt/sources.list.d/ceph.list
-deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
-deb http://download.proxmox.com/debian/ceph-reef bookworm no-subscription
-EOF
 
-# Write new pve-enterprise.list
-cat <<EOF > /etc/apt/sources.list.d/pve-enterprise.list
-deb http://security.debian.org/debian-security bookworm-security main contrib
-EOF
 
 # Update package lists
 apt-get update
